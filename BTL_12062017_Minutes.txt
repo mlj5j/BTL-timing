@@ -1,0 +1,43 @@
+Review of the data merging strategy:
+
+
+TOFPET2 Data
+
+R_2017_06_30__13_54_21 (duration 1.5h)
+
+
+Trigger Channels:	768 & 896
+
+Sensors Channels:	800 & 928  
+
+The signals are grouped in the coincidence file:
+
+	R_2017_06_30__13_54_21_c_trigger.root (uploaded)
+	
+You have the sensors in channelID1 and the trigger in channelID2  (so time1 is the time measured by the sensor, time2 is the time of arrival of the trigger), the table explains this:
+
+	ASIC	channelID1	channelID2*	ChannleType
+	1	X		768		Trigger
+	1	800		X		Sensor
+	
+	2	X		896		Trigger
+	2	928		X		Sensor
+
+
+*Trigger signals in raw data are delayed respect to the sensors of ~220ns. This offset is already subtracted in the time2 variable.
+
+An example of measurement is given in "TriggerEvents.pdf". You can reproduce the cut
+
+
+H4DAQ Data
+
+Run 8076 and on for 1.5h
+For these data, a clock signal is provided from TOFPET2DAQ to H4DAQ. The signal (200MHz clock, check it is not 50MHz please) is sampled.
+
+
+Informations.
+The first Trigger in "Run 8076" corresponds to the first signals in TOFPET2 Trigger Channels. The trigger are tagged in the two systems by TOFPET2 daw clock periods (in TOFPET2DAQ divide by 5000 the "time2" variable, in H4DAQ count the edges of the sampled clocks from the first trigger onwards)
+
+
+Some of the triggers detected in TOFPET2DAQ might be not detected in H4DAQ, we can identify them by the clock periods between consecutive triggers in the two DAQ systems.
+
