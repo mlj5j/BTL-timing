@@ -1,3 +1,12 @@
+/*
+----------------------------------Written by Matt Joyce-------------------------------------
+|  This macro looks to see if the time the trigger from the TOFPET2 board (ASIC 2) matches |
+|  with the time the trigger is received by the NINO boards.  This is only checking        |
+|  the first spill for the first run of the NINOs coinciding with the beginning of         |
+|  the TOFPET run.                                                                         |
+--------------------------------------------------------------------------------------------
+*/
+
 #include <iostream>
 #include "TFile.h"
 #include "TCanvas.h"
@@ -14,9 +23,10 @@ void synchplot()
     bool valid = true;
     double scaledninotime;
 
+    //Declaring variables we get from the root files
     long long tpettime;
     float step1, step2;
-    unsigned short chID;
+    unsigned short chID; //For ASIC 1 the channel is 768.  ASIC is channel 896.
     double scaledtpettime;
     unsigned long long ninotime[2];
     unsigned int timeboard[2];
@@ -65,33 +75,34 @@ void synchplot()
     else
 	num_events = tpet_events;
 
+    //Looping through the events in the TOFPET root file.  
     for (int i=0; i<tpet_events; i++)
     {
-	if (valid == false)
+	if (valid == false) //This breaks the loop if we run out of NINO events
 	    break;
 	tpettree->GetEntry(i);
 
-	if (step1 == 4)
+	if (step1 == 4)  //Choosing only events from TOFPET having 4V threshold
 	{
 //	    if (step2 == 32)
 //	    {
-		if (chID == 896)
+		if (chID == 896)  //Choosing only triggers coming from ASIC 2
 		{
-		    ninotree->GetEntry(nino_counter);
-		    if (nino_counter == 0)
+		    ninotree->GetEntry(nino_counter);  //Getting event from NINO corresponding to ASIC 2 trigger
+		    if (nino_counter == 0)  //Here we synchronize the first events on each board to be at time = 0.
 		    {
-			tpetshift = tpettime;
+			tpetshift = tpettime;  
 			ninoshift = ninotime[1];
 		    }
 
-		    tpettime -= tpetshift;
-		    ninotime[1] -= ninoshift;
-		    scaledtpettime = (double)tpettime/1e3;
-		    scaledninotime = (double)ninotime[1]/5;
+		    tpettime -= tpetshift;  //Applying the shift needed to zero the first event time
+		    ninotime[1] -= ninoshift;  //Applying the shift needed to zero the first event time
+		    scaledtpettime = (double)tpettime/1e3;  //Converting the topfet time from ps to ns
+		    scaledninotime = (double)ninotime[1]*5;  //Converting from UNIX time to ns
 		    g1->SetPoint(nino_counter,scaledninotime,scaledtpettime);
 		    nino_counter++;
 //		    cout << nino_counter << endl;
-		    if (nino_counter > nino_events)
+		    if (nino_counter > nino_events) //This checks that we don't try to read events that aren't there
 			valid == false;
 		}
 //	    }
