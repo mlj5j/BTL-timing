@@ -17,8 +17,8 @@ void synchplot()
 {
     
     int tpet_events, nino_events, num_events;
-    int tpetshift = 0;
-    int ninoshift =0;
+    long long tpetshift = 0;
+    unsigned long long ninoshift =0;
     int nino_counter = 0;
     bool valid = true;
     double scaledninotime;
@@ -100,10 +100,22 @@ void synchplot()
 		    scaledtpettime = (double)tpettime/1e3;  //Converting the topfet time from ps to ns
 		    scaledninotime = (double)ninotime[1]*5;  //Converting from UNIX time to ns
 		    g1->SetPoint(nino_counter,scaledninotime,scaledtpettime);
+
+
+		    //----------------For debugging----------------------------- 
+		    /*
+		    if (nino_counter < 610)
+			cout << scaledninotime << endl;
+//		    cout << nino_events << endl;
+//		    ------------------------------------------------------------
+		    */
+
 		    nino_counter++;
-//		    cout << nino_counter << endl;
-		    if (nino_counter > nino_events) //This checks that we don't try to read events that aren't there
-			valid == false;
+		    if (nino_counter == nino_events) //This checks that we don't try to read events that aren't there.
+		    {
+			valid = false;
+			cout << nino_counter << endl;
+		    }
 		}
 //	    }
 	}
