@@ -12,6 +12,7 @@
 #include "TCanvas.h"
 #include "TGraph.h"
 #include "TTree.h"
+#include "TAxis.h"
 
 void synchplot()
 {
@@ -123,7 +124,9 @@ void synchplot()
 
     }
     TCanvas *c1 = new TCanvas("c1","c1",500,500);
+    g1->SetTitle("NINO time vs TOFPET trigger time; NINO time (ns); TOFPET time (ns)");
     g1->Draw("Ap");
+    c1->SaveAs("NINOvsTOFPETtimes_spill_1.png");
 }
 
 
