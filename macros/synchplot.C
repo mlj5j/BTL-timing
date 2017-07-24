@@ -16,6 +16,9 @@
 
 void synchplot()
 {
+
+    int k = 1;  //counter for debugging
+    int l = 1;  //counter for debugging
     
     int tpet_events, nino_events, num_events;
     long long tpetshift = 0;
@@ -23,6 +26,7 @@ void synchplot()
     int nino_counter = 0;
     bool valid = true;
     double scaledninotime;
+    int board;
 
     //Declaring variables we get from the root files
     long long tpettime;
@@ -83,6 +87,11 @@ void synchplot()
 	    break;
 	tpettree->GetEntry(i);
 
+	if (timeboard[0] == 16842753)
+	    board = 0;
+	else
+	    board = 1;
+
 	if (step1 == 4)  //Choosing only events from TOFPET having 4V threshold
 	{
 //	    if (step2 == 32)
@@ -101,8 +110,20 @@ void synchplot()
 		    scaledtpettime = (double)tpettime/1e3;  //Converting the topfet time from ps to ns
 		    scaledninotime = (double)ninotime[1]*5;  //Converting from UNIX time to ns
 		    g1->SetPoint(nino_counter,scaledninotime,scaledtpettime);
-
-
+		    /*
+//----------------------For debugging---------------------------------------------
+		    if (scaledtpettime > 4e10 && scaledtpettime < 8e10)
+		    {
+			cout << "number of step events = " << k << endl;
+			k++;
+		    }
+		    if (scaledtpettime > 8e10 && scaledtpettime < 1e11)
+		    {
+			cout << "number of second step events = " << l << endl;
+			l++;
+		    }
+//-------------------------------------------------------------------------------
+*/
 		    //----------------For debugging----------------------------- 
 		    /*
 		    if (nino_counter < 610)
@@ -115,7 +136,7 @@ void synchplot()
 		    if (nino_counter == nino_events) //This checks that we don't try to read events that aren't there.
 		    {
 			valid = false;
-			cout << nino_counter << endl;
+			cout << "Total number of events read = " << nino_counter << endl;
 		    }
 		}
 //	    }
@@ -124,9 +145,9 @@ void synchplot()
 
     }
     TCanvas *c1 = new TCanvas("c1","c1",500,500);
-    g1->SetTitle("NINO time vs TOFPET trigger time; NINO time (ns); TOFPET time (ns)");
+    g1->SetTitle("H4DAQ time vs TOFPET trigger time; H4DAQ time (ns); TOFPET time (ns)");
     g1->Draw("Ap");
-    c1->SaveAs("NINOvsTOFPETtimes_spill_1.png");
+    c1->SaveAs("H4DAQvsTOFPETtimes_spill_1.png");
 }
 
 
